@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Service
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ArcadeGames
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - "5432:5432"
+
+  # Node.js Application Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/ArcadeGames
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
