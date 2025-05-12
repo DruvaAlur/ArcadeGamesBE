@@ -1,12 +1,22 @@
-const express = require("express");
-const { PrismaClient } = require("./generated/prisma_client");
-require("dotenv").config();
-const passport = require("passport");
-const cors = require("cors");
-const routes = require("./src/routes/index");
+import express from "express";
+import { PrismaClient } from "./generated/prisma_client/index.js";
+import dotenv from "dotenv";
+dotenv.config();
+import passport from "passport";
+import cors from "cors";
+import routes from "./src/routes/index.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(cors());
+app.use(cookieParser());
+app.use(
+  cors(
+    cors({
+      origin: "http://localhost:5173", // your frontend URL
+      credentials: true, // allow cookies to be sent
+    })
+  )
+);
 app.use(passport.initialize());
 const prisma = new PrismaClient();
 

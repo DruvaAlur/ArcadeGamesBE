@@ -1,10 +1,13 @@
-const Router = require("express");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const router = Router();
+import { Router } from "express";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import dotenv from "dotenv";
+import passport from "passport";
+import authController from "../controllers/auth.controller.js";
 
-require("dotenv").config();
-const passport = require("passport");
-const jwt = require("jsonwebtoken");
+const router = Router();
+dotenv.config();
+
+// Rest of your code using these imports...
 
 passport.use(
   new GoogleStrategy(
@@ -31,14 +34,7 @@ router.get(
 router.get(
   "/callback",
   passport.authenticate("google", { session: false }),
-  (req, res) => {
-    console.log(res);
-
-    const token = jwt.sign({ user: req.user }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
-    res.redirect(`http://localhost:3000/login-success?token=${token}`);
-  }
+  authController.login
 );
 
-module.exports = router;
+export default router;
